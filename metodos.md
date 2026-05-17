@@ -63,20 +63,6 @@ Não tem código, não tem biblioteca. É só informação.
 3. Atualiza o package.json, adicionando o Express como dependência do projeto.
 
 
-## PASTA BACKEND/SRC
- src/middleware
- src/routes
- src/utils
-
- src/server.js
- Aqui estou criando o servidor, usando o Express. Ele é o coração do backend, onde tudo começa.
- Apos criar o server.js, ao fazer o comando:
- __node src/server.js__
- O servidor inicia, e o EXPRESS esta ouvindo na porta especificada (3001),
- Não fechar o terminal, enquanto ele estivar aberto, o backend continua funcionando.
- Teste: 
- http://localhost:3001/
-
  __npm install nodemon --save-dev__
 Se toda vez que você salvar uma alteração no código precisar parar e reiniciar o servidor manualmente, vai ser muito chato.
 Por isso existe o Nodemon — uma biblioteca que fica observando seus arquivos e reinicia o servidor automaticamente toda vez 
@@ -95,3 +81,188 @@ Sem o CORS, quando o React tentasse buscar dados do backend, o navegador bloquea
 
 * dotenv
 O dotenv é uma biblioteca que permite criar um arquivo .env para guardar informações sensíveis, como senhas, chaves de API e configurações que não devem ser expostas no código. 
+
+O arquivo .env é utilizado para armazenar variáveis de ambiente do projeto, como configurações, senhas, portas e chaves secretas, evitando deixar informações sensíveis diretamente no código.
+
+O dotenv é uma biblioteca que lê o arquivo .env e carrega essas variáveis para dentro do process.env no Node.js, permitindo que sejam utilizadas de forma segura e organizada durante a execução da aplicação.
+
+
+
+__npm install @prisma/client__
+__npm install prisma --save-dev__
+
+O Prisma é uma ferramenta utilizada para facilitar a comunicação entre a aplicação Node.js e o banco de dados.
+
+O pacote @prisma/client contém o cliente que será usado no código para realizar operações no banco, como criar, buscar, atualizar e deletar dados.
+
+O pacote prisma é instalado como dependência de desenvolvimento e fornece ferramentas para configurar o banco, criar modelos, gerar tabelas e executar migrações através do terminal.
+
+
+
+## PASTA BACKEND/SRC
+ src/middleware
+* src/prisma
+
+  Apos instalar o Prisma e o Prisma CLI, criar pasta e rodar:
+  npx prisma init 
+  Sera criada a pasta __prisma__ com o arquivo __schema.prisma__, onde você define o modelo do banco de dados, as tabelas e os campos.
+  Ao fazer (model User {}) o Prisma cria tabela SQL, comando JS automaticos e relações.
+  Todo campo do Prisma normalmento possui:
+  nomeCampo Tipo Modificadores
+  Ex: nome String @unique
+  Tipos de modificadores Prisma
+  
+   @id
+  -> Define a chave primária da tabela.
+  
+  Ex:
+  id Int @id
+  
+  @default()
+  -> Define um valor padrão automático.
+  
+  Ex:
+  @default(now())
+  -> coloca a data atual automaticamente.
+  
+  @default(uuid())
+  -> gera um UUID automaticamente.
+  
+  @default(autoincrement())
+  -> gera IDs incrementais automaticamente.
+  
+  @default(false)
+  -> define false como padrão.
+  
+  
+  @unique
+  -> Campo único, não pode repetir.
+  
+  Ex:
+  email String @unique
+  
+  
+  @@unique
+  -> Unique composto.
+  A combinação de dois ou mais campos não pode repetir.
+  
+  Ex:
+  @@unique([email, telefone])
+  
+  
+  @updatedAt
+  -> Atualiza automaticamente a data da última edição.
+  
+  Ex:
+  updatedAt DateTime @updatedAt
+  
+  
+  @relation
+  -> Cria relacionamento entre tabelas.
+  
+  Ex:
+  
+  pacienteId String
+  
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+  
+  fields: [pacienteId]
+  -> usa o campo pacienteId desta tabela.
+  
+  references: [id]
+  -> conecta com o id da tabela Paciente.
+  
+  Isso faz o Prisma entender a qual paciente a consulta pertence.
+  
+  
+  @db.Text
+  -> Define um tipo específico do banco.
+  
+  Normalmente String vira VARCHAR.
+  
+  @db.Text transforma em TEXT, ideal para textos longos.
+  
+  
+  @@index
+  -> Cria índices no banco.
+  Melhora a velocidade das buscas.
+  
+  Ex:
+  @@index([nome])
+  
+  
+  @@id
+  -> Cria chave primária composta.
+  
+  Ex:
+  @@id([usuarioId, perfilId])
+  
+  
+  @map
+  -> Muda o nome de uma coluna no banco.
+  
+  Ex:
+  nomeSocial String @map("nome_social")
+  
+  
+  @@map
+  -> Muda o nome da tabela no banco.
+  
+  Ex:
+  @@map("pacientes")
+  
+  
+  @ignore
+  -> Prisma ignora um campo.
+  
+  
+  @@ignore
+  -> Prisma ignora o model/tabela inteira.
+  
+  
+  ?
+  -> Campo opcional.
+  
+  Ex:
+  nome String?
+  
+  
+  []
+  -> Representa lista/array.
+  
+  Ex:
+  consultas Consulta[]
+  
+  -> Um paciente pode ter várias consultas.
+  
+  
+   
+  
+  
+  
+  
+  
+  src/routes
+  src/utils
+ 
+### Iniciando o banco de dados prisma
+  Adicionar o DATABASE_URL no arquivo .env, com a string de conexão do banco de dados.
+  DATABASE_URL="mysql://root:123456@localhost:3306/prontuario_trans"
+  
+   __npx prisma migrate dev --name init__ -> Cria a primeira migração do banco, com o nome "init". Ele lê o schema.prisma, gera os arquivos de migração e cria as tabelas no banco de dados.
+   Pode ser necessario especificar no packge.json o caminho do schema prisma.
+
+   Ao fazer isso, o Prisma cria uma pasta __migrations__ dentro da pasta __prisma__, onde ficam os arquivos de migração. Cada migração é um conjunto de instruções para criar ou alterar as tabelas do banco de dados.
+   Se olhar no MYSQL agora, tera todas as tabelas criadas pelo PRISMA
+   
+
+* src/server.js
+ Aqui estou criando o servidor, usando o Express. Ele é o coração do backend, onde tudo começa.
+ Apos criar o server.js, ao fazer o comando:
+ __node src/server.js__
+ O servidor inicia, e o EXPRESS esta ouvindo na porta especificada (3001),
+ Não fechar o terminal, enquanto ele estivar aberto, o backend continua funcionando.
+ Teste: 
+ http://localhost:3001/
+
+ 
