@@ -1,9 +1,27 @@
 # PASTAS CRIADAS
+
 * BACKEND/ 
-  - node_modules/ → as bibliotecas de verdade, salvas no seu computador.
-  - package-lock.json → registro das versões exatas que foram instaladas.
-  - package.json → lista do que o projeto precisa.
+   node_modules/ → as bibliotecas de verdade, salvas no seu computador.
+
+   package-lock.json → registro das versões exatas que foram instaladas.
+
+   package.json → lista do que o projeto precisa.
+    /src
+      /middleware
+      /routes
+      /utils
+      server.js
    
+
+# PACKGE.JSON
+O package.json é o arquivo de configuração do projeto, onde ficam listadas as dependências e
+Altereções feitas: 
+
+"scripts": {
+  "dev": "nodemon src/server.js", ->  Roda em nodemon, para reiniciar o servidor automaticamente toda vez que salvar uma alteração.
+  "start": "node src/server.js" -> Roda o servidor normalmente, sem reiniciar automaticamente.
+
+},   
 
 # HTTP
  GET -> "Me de essa informação"
@@ -58,3 +76,22 @@ Não tem código, não tem biblioteca. É só informação.
  Não fechar o terminal, enquanto ele estivar aberto, o backend continua funcionando.
  Teste: 
  http://localhost:3001/
+
+ __npm install nodemon --save-dev__
+Se toda vez que você salvar uma alteração no código precisar parar e reiniciar o servidor manualmente, vai ser muito chato.
+Por isso existe o Nodemon — uma biblioteca que fica observando seus arquivos e reinicia o servidor automaticamente toda vez 
+que você salvar uma alteração.
+o (--save-dev) é para indicar que essa biblioteca é só para desenvolvimento, pois quando entra em produção ele nao fica reiniciando.
+
+__npm install cors dotenv__
+
+* cors
+O frontend roda na porta 5173 e o backend na porta 3001? Para o navegador, portas diferentes são domínios diferentes — e por segurança ele bloqueia requisições entre domínios diferentes. Isso se chama Same Origin Policy.
+O CORS (Cross Origin Resource Sharing) é uma forma de dizer ao navegador:
+
+"Pode deixar — eu autorizo o frontend da porta 5173 a falar com este servidor."
+
+Sem o CORS, quando o React tentasse buscar dados do backend, o navegador bloquearia e daria erro.
+
+* dotenv
+O dotenv é uma biblioteca que permite criar um arquivo .env para guardar informações sensíveis, como senhas, chaves de API e configurações que não devem ser expostas no código. 
